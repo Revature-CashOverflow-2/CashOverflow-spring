@@ -6,8 +6,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.revature.dao.BankAccountRepo;
+import com.revature.dto.TransactionDto;
+import com.revature.model.Transaction;
+import com.revature.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -124,5 +129,30 @@ class AccountControllerTest {
 		}
 		
 		assertFalse(result);
+	}
+
+	@Test
+	void addTransaction() {
+		TransactionDto transDto = Mockito.mock(TransactionDto.class);
+		TransactionService tranServ = Mockito.mock(TransactionService.class);
+		IncomeExpenseController inExpCont = new IncomeExpenseController(tranServ);
+
+		when(transDto.getAccountId()).thenReturn(1);
+		when(transDto.getAmount()).thenReturn(1.0);
+		when(transDto.getDescription()).thenReturn("test");
+
+		inExpCont.addTransaction(transDto);
+	}
+
+	@Test
+	void getTransactions() {
+		TransactionService tranServ = Mockito.mock(TransactionService.class);
+		IncomeExpenseController inExpCont = new IncomeExpenseController(tranServ);
+		List<Transaction> transaction = new ArrayList();
+		int id = 1;
+
+		List<Transaction> transactions = inExpCont.getTransactions(id);
+		assertEquals(transactions, transaction);
+
 	}
 }
