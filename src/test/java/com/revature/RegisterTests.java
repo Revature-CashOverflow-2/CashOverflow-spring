@@ -7,14 +7,21 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.revature.dto.SocialAccountDto;
+import com.revature.model.UserSocialMedia;
+//import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -352,6 +359,44 @@ class RegisterTests {
 
 		verify(mockServ, times(1)).insertUserAccount(user);
 		verify(mockMapper, times(1)).map(test, UserAccount.class);
+
+	}
+
+	@Test
+	void addSocialBadAuth(){
+		assertThrows(ResponseStatusException.class, () -> regCont.addSocial(null, null));
+	}
+
+	@Test
+	void addSocialIsAuthAccount(){
+		Authentication auth = Mockito.mock(Authentication.class);
+		SocialAccountDto socialAccountDto = Mockito.mock(SocialAccountDto.class);
+		UserAccount user = Mockito.mock(UserAccount.class);
+
+		String username = "test";
+
+		when(auth.getName()).thenReturn(username);
+		when(serv.getUserFromUsername(username)).thenReturn(user);
+		when(user.isAuthAccount()).thenReturn(false);
+
+		assertThrows(ResponseStatusException.class, () -> regCont.addSocial(auth, socialAccountDto));
+
+	}
+
+	@Test
+	void addSocialTest(){
+		Authentication auth = Mockito.mock(Authentication.class);
+		SocialAccountDto socialAccountDto = Mockito.mock(SocialAccountDto.class);
+		UserAccount user = Mockito.mock(UserAccount.class);
+		UserSocialMedia social = Mockito.mock(UserSocialMedia.class);
+
+		String username = "test";
+
+		when(auth.getName()).thenReturn(username);
+		when(serv.getUserFromUsername(username)).thenReturn(user);
+		when(user.isAuthAccount()).thenReturn(true);
+
+		assertThrows(NullPointerException.class, () -> regCont.addSocial(auth, socialAccountDto));
 
 	}
 
