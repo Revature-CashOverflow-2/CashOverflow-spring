@@ -1,5 +1,6 @@
 package com.revature.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class SocialAccountServiceImpl implements SocialAccountService {
 
 	@Override
 	public List<UserSocialMedia> getSocialAccounts(int id) {
-		return (List<UserSocialMedia>) socialRepo.getById(id);
+		return  Arrays.asList (socialRepo.getById(id));
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.revature.controller;
 
 import java.util.regex.Pattern;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -137,4 +138,5 @@ public class RegisterController {
 	protected UserSocialMedia convertToEntity(UserSocialMedia dtoAccount) {
 		return mapper.map(dtoAccount, UserSocialMedia.class);
 	}
+
 }

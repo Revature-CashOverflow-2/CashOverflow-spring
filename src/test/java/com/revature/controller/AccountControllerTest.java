@@ -6,8 +6,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.revature.dao.BankAccountRepo;
+import com.revature.dto.TransactionDto;
+import com.revature.model.Transaction;
+import com.revature.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,6 +86,7 @@ class AccountControllerTest {
 
 		assertEquals(actualUser, expectedAccount);
 	}
+
 	@Test
 	void removeRequestTest() {
 		BankAccount initialAccount = new BankAccount();
@@ -98,31 +104,67 @@ class AccountControllerTest {
 		UserAccount mockUser = new UserAccount("Awoo", "hasdf");
 
 		BetweenUsersDto betweenTest = new BetweenUsersDto();
-		
+
 		Authentication auth = Mockito.mock(Authentication.class);
-		
+
 		BankAccountService bankAccServ = Mockito.mock(BankAccountService.class);
-		
+
 		ModelMapper mapper = Mockito.mock(ModelMapper.class);
-		
+
 		UserAccountService userAccServ = Mockito.mock(UserAccountService.class);
-		
+
 		AccountController accControl = new AccountController(bankAccServ, mapper, userAccServ);
-		
+
 		accControl.removeRequests(auth, betweenTest);
-		
+
 		List<BetweenUsers> checker = accControl.retrieveRequests(auth);
-		
+
 		boolean result = false;
-		
-		for(int i = 0; i < checker.size(); i++)
-		{
-			if (checker.get(i) == accControl.convertToBetweenUsers(betweenTest))
-			{
+
+		for (int i = 0; i < checker.size(); i++) {
+			if (checker.get(i) == accControl.convertToBetweenUsers(betweenTest)) {
 				result = true;
 			}
 		}
-		
+
 		assertFalse(result);
+	}
+
+	@Test
+	void transferBetweenUsersTest() {
+		UserAccountService userAccServ = Mockito.mock(UserAccountService.class);
+		BankAccountService bankAccServ = Mockito.mock(BankAccountService.class);
+		Authentication auth = Mockito.mock(Authentication.class);
+
+		BetweenUsers between = new BetweenUsers();
+		UserAccount user = new UserAccount();
+		BetweenUsersDto betweenDto = new BetweenUsersDto();
+		betweenDto.setSendOrReceive(1);
+		betweenDto.setOriginUser("account1");
+		betweenDto.setUser("account2");
+		betweenDto.setTransferAccount(1);
+		betweenDto.setTransferAmount(2.00);
+
+
+		when(auth.getName()).thenReturn("test");
+
+		cont.transferFundsBetweenUsers(auth, betweenDto);
+	}
+
+	@Test
+	void completeTransfer() {
+		BankAccountService bankAccServ = Mockito.mock(BankAccountService.class);
+		Authentication auth = Mockito.mock(Authentication.class);
+
+		BetweenUsersDto betweenDto = new BetweenUsersDto();
+		betweenDto.setSendOrReceive(1);
+		betweenDto.setOriginUser("account1");
+		betweenDto.setUser("account2");
+		betweenDto.setTransferAccount(1);
+		betweenDto.setTransferAmount(5.00);
+
+		cont.completeTransfer(auth, betweenDto);
+
+
 	}
 }
